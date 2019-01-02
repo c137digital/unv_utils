@@ -1,0 +1,5 @@
+prospector
+pytest
+pytest-cov
+autopep8
+sphinx
