@@ -3,7 +3,7 @@ import logging
 
 
 def exception_handler(ex_type, exception, tb, with_class_dict=False):
-    """Print the usual traceback information. With extended stack info."""
+    """Print usual traceback information. With extended stack info."""
     original_tb = tb
     while True:
         if not tb.tb_next:
