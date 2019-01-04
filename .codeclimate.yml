@@ -4,6 +4,7 @@ method-complexity:
 exclude_patterns:
   - "./setup.py"
   - "docs/"
+  - "tests/"
 plugins:
   fixme:
     enabled: true
