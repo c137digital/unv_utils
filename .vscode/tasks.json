@@ -12,7 +12,7 @@
             "command": ". activate.sh && twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u mortyspace"
         },
         {
-            "label": "Python: Upload release to PyPI",
+            "label": "Python: Release package on PyPI",
             "type": "shell",
             "command": ". activate.sh && twine upload dist/* -u mortyspace"
         },
