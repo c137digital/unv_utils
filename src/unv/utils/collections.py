@@ -1,23 +1,25 @@
-def update_nested_dict(original: dict, from_dict: dict) -> dict:
-    """Simple function to update nested dict.
+def update_dict_recur(original: dict, from_dict: dict) -> dict:
+    """Update dict recursively.
 
-    >>> d = {0: 0, 1: {1: 1}, 2: {2: {3: 3}}}
-    >>> n = {0: 1, 2: {2: {4: 4}}, 5: 1}
-    >>> r = update_nested_dict(d, n)
-    >>> r is d
+    >>> original = {0: 'zero', 1: {1: 'one'}, 2: {2: {3: 3}}, 6: 'item'}
+    >>> update_with = {0: 1, 1: {1: 'hello'}, 2: {2: {4: 4}}, 5: 1}
+    >>> result = update_dict_recur(original, update_with)
+    >>> result is original  # original dict not copied
     True
-    >>> r[0]
+    >>> result[0]  # was 'one'
     1
-    >>> r[1]
-    {1: 1}
-    >>> r[2][2]
+    >>> result[1]  # updated inside, was 'one'
+    {1: 'hello'}
+    >>> result[2][2]  # added {4: 4} from `update_with`
     {3: 3, 4: 4}
-    >>> r[5]
+    >>> result[5]  # added new item to dict
     1
+    >>> result[6]  # same
+    'item'
     """
     for key, value in from_dict.items():
         if isinstance(value, dict) and key in original:
-            original[key] = update_nested_dict(original.get(key, {}), value)
+            original[key] = update_dict_recur(original.get(key, {}), value)
         else:
             original[key] = value
     return original
