@@ -8,7 +8,7 @@
 [![PyPI implementation](https://img.shields.io/pypi/implementation/unv_utils.svg)](https://pypi.python.org/pypi/unv_utils/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/unv_utils.svg)](https://pypi.python.org/pypi/unv_utils/)
 [![PyPI license](https://img.shields.io/pypi/l/unv_utils.svg)](https://pypi.python.org/pypi/unv_utils/)
-[![PyPI version fury.io](https://badge.fury.io/py/unv_utils.svg)](https://pypi.python.org/pypi/unv_utils/)
+[![PyPI version fury.io](https://badge.fury.io/py/unv.utils.svg)](https://pypi.python.org/pypi/unv.utils/)
 [![PyPI download month](https://img.shields.io/pypi/dm/unv_utils.svg)](https://pypi.python.org/pypi/unv_utils/)
 
 ## What you need to change
