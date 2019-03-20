@@ -6,7 +6,7 @@ def register(method):
     return method
 
 
-class TaskErrorException(Exception):
+class TaskSubprocessError(Exception):
     pass
 
 
@@ -18,6 +18,19 @@ class TasksBase:
             method = getattr(self, method)
             if getattr(method, '__task__', None):
                 self.tasks[method.__name__] = method
+
+    async def subprocess(self, command):
+        proc = await asyncio.create_subprocess_shell(
+            command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        if stderr:
+            raise TaskSubprocessError(
+                f'Command finished with error:\n{stderr.decode()}')
+        if stdout:
+            return stdout.decode()
 
 
 class TasksManager:

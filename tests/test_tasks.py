@@ -1,6 +1,9 @@
 import asyncio
+import pytest
 
-from unv.utils.tasks import TasksManager, TasksBase, register
+from unv.utils.tasks import (
+    TasksManager, TasksBase, register, TaskSubprocessError
+)
 
 
 class SimpleTasks(TasksBase):
@@ -14,6 +17,14 @@ class SimpleTasks(TasksBase):
         result += 2
         return result
 
+    @register
+    async def run(self):
+        return await self.subprocess('echo "test"')
+
+    @register
+    async def will_raise(self):
+        return await self.subprocess('asdf1_123_342f')
+
 
 def test_tasks_register_and_run():
     manager = TasksManager()
@@ -23,3 +34,9 @@ def test_tasks_register_and_run():
 
     result = manager.run('simple.example 2')
     assert result == 6
+
+    result = manager.run('simple.run')
+    assert result == 'test\n'
+
+    with pytest.raises(TaskSubprocessError):
+        manager.run('simple.will_raise')
