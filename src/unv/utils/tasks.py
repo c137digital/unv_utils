@@ -40,12 +40,12 @@ class TasksManager:
     def register(self, task_class, namespace: str = ''):
         namespace = namespace or task_class.__name__.lower() \
             .replace('tasks', '')
-        self.tasks[namespace] = task_class()
+        self.tasks[namespace] = task_class
 
     def run(self, command):
         args = command.split()
         namespace, command = args[0].split('.')
-        task = self.tasks[namespace].tasks[command]
+        task = self.tasks[namespace]().tasks[command]
 
         task_args = []
         if len(args) > 1:
