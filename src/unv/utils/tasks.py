@@ -11,14 +11,6 @@ class TaskSubprocessError(Exception):
 
 
 class TasksBase:
-    def __init__(self):
-        self.tasks = {}
-
-        for method in dir(self):
-            method = getattr(self, method)
-            if getattr(method, '__task__', None):
-                self.tasks[method.__name__] = method
-
     async def subprocess(self, command):
         proc = await asyncio.create_subprocess_shell(
             command,
@@ -42,13 +34,21 @@ class TasksManager:
             .replace('tasks', '')
         self.tasks[namespace] = task_class
 
+    def run_task(self, task_class, command, args):
+        task = getattr(task_class(), command)
+        return asyncio.run(task(*args))
+
     def run(self, command):
         args = command.split()
         namespace, command = args[0].split('.')
-        task = self.tasks[namespace]().tasks[command]
 
+        task_class = self.tasks[namespace]
         task_args = []
         if len(args) > 1:
             task_args = args[1:]
 
-        return asyncio.run(task(*task_args))
+        for method in dir(task_class):
+            method = getattr(task_class, method)
+            if getattr(method, '__task__', None) and \
+                    method.__name__ == command:
+                return self.run_task(task_class, command, task_args)
