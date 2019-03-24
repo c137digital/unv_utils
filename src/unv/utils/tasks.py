@@ -11,6 +11,9 @@ class TaskSubprocessError(Exception):
 
 
 class TasksBase:
+    def __init__(self, storage):
+        self.storage = storage
+
     async def subprocess(self, command):
         proc = await asyncio.create_subprocess_shell(
             command,
@@ -28,6 +31,7 @@ class TasksBase:
 class TasksManager:
     def __init__(self):
         self.tasks = {}
+        self.storage = {}
 
     def register(self, task_class, namespace: str = ''):
         namespace = namespace or task_class.__name__.lower() \
@@ -35,20 +39,25 @@ class TasksManager:
         self.tasks[namespace] = task_class
 
     def run_task(self, task_class, command, args):
-        task = getattr(task_class(), command)
+        task = getattr(task_class(self.storage), command)
         return asyncio.run(task(*args))
 
-    def run(self, command):
-        args = command.split()
-        namespace, command = args[0].split('.')
+    def run(self, commands):
+        commands = commands.split()
+        for index, command in enumerate(commands, start=1):
+            namespace, task = command.split('.')
+            task_class = self.tasks[namespace]
 
-        task_class = self.tasks[namespace]
-        task_args = []
-        if len(args) > 1:
-            task_args = args[1:]
+            task_args = []
+            if ':' in task:
+                task, task_args = task.split(':')
+                task_args = task_args.split(',')
 
-        for method in dir(task_class):
-            method = getattr(task_class, method)
-            if getattr(method, '__task__', None) and \
-                    method.__name__ == command:
-                return self.run_task(task_class, command, task_args)
+            for method in dir(task_class):
+                method = getattr(task_class, method)
+                if getattr(method, '__task__', None) and \
+                        method.__name__ == task:
+                    result = self.run_task(task_class, task, task_args)
+                    if index == len(commands):
+                        self.storage.clear()
+                        return result

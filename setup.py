@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='unv.utils',
-    version='0.2.3',
+    version='0.2.4',
     description="""Common helpers for unv framework""",
     url='http://github.com/c137digital/unv_utils',
     author='Morty Space',
@@ -16,8 +16,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
