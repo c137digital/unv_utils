@@ -6,7 +6,7 @@ def register(method):
     return method
 
 
-class TaskLocalRunError(Exception):
+class TaskRunError(Exception):
     pass
 
 
@@ -21,9 +21,12 @@ class TasksBase:
             stderr=asyncio.subprocess.PIPE
         )
         stdout, stderr = await proc.communicate()
-        if stderr:
-            raise TaskLocalRunError(
-                f'Command finished with error:\n{stderr.decode()}')
+        if stderr and proc.returncode != 0:
+            raise TaskRunError(
+                f'Command "{command}" finished with '
+                f'error code [{proc.returncode}]:\n'
+                f'{stderr.decode()} '
+            )
         if stdout:
             return stdout.decode()
 

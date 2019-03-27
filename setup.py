@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='unv.utils',
-    version='0.2.5',
+    version='0.2.6',
     description="""Common helpers for unv framework""",
     url='http://github.com/c137digital/unv_utils',
     author='Morty Space',

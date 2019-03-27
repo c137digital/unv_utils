@@ -2,7 +2,7 @@ import asyncio
 import pytest
 
 from unv.utils.tasks import (
-    TasksManager, TasksBase, register, TaskLocalRunError
+    TasksManager, TasksBase, register, TaskRunError
 )
 
 
@@ -59,5 +59,5 @@ def test_tasks_register_and_run():
     result = manager.run('simple.run')
     assert result == 'test\n'
 
-    with pytest.raises(TaskLocalRunError):
+    with pytest.raises(TaskRunError):
         manager.run('simple.will_raise')
