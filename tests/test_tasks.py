@@ -2,7 +2,7 @@ import asyncio
 import pytest
 
 from unv.utils.tasks import (
-    TasksManager, TasksBase, register, TaskSubprocessError
+    TasksManager, TasksBase, register, TaskLocalRunError
 )
 
 
@@ -13,8 +13,8 @@ class SimpleTasks(TasksBase):
 
     @register
     async def example(self, *numbers):
-        if 'value' in self.storage:
-            return self.storage['value'] + 10
+        if 'value' in self._storage:
+            return self._storage['value'] + 10
 
         result = 0
         for number in numbers:
@@ -24,15 +24,15 @@ class SimpleTasks(TasksBase):
 
     @register
     async def run(self):
-        return await self.subprocess('echo "test"')
+        return await self._local('echo "test"')
 
     @register
     async def modify(self, value):
-        self.storage['value'] = int(value)
+        self._storage['value'] = int(value)
 
     @register
     async def will_raise(self):
-        return await self.subprocess('asdf1_123_342f')
+        return await self._local('asdf1_123_342f')
 
 
 def test_tasks_register_and_run():
@@ -59,5 +59,5 @@ def test_tasks_register_and_run():
     result = manager.run('simple.run')
     assert result == 'test\n'
 
-    with pytest.raises(TaskSubprocessError):
+    with pytest.raises(TaskLocalRunError):
         manager.run('simple.will_raise')
