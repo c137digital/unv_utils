@@ -2,7 +2,7 @@ import asyncio
 
 
 def register(method):
-    method.__task__ = True
+    method.__task__ = {}
     return method
 
 
@@ -41,26 +41,25 @@ class TasksManager:
             .replace('tasks', '')
         self.tasks[namespace] = task_class
 
-    def run_task(self, task_class, command, args):
-        task = getattr(task_class(self.storage), command)
+    def run_task(self, task_class, name, args):
+        task = getattr(task_class(self.storage), name)
         return asyncio.run(task(*args))
 
     def run(self, commands):
         commands = commands.split()
         for index, command in enumerate(commands, start=1):
-            namespace, task = command.split('.')
+            namespace, name = command.split('.')
+
             task_class = self.tasks[namespace]
+            args = []
+            if ':' in name:
+                name, task_args = name.split(':')
+                args = task_args.split(',')
 
-            task_args = []
-            if ':' in task:
-                task, task_args = task.split(':')
-                task_args = task_args.split(',')
-
-            for method in dir(task_class):
-                method = getattr(task_class, method)
-                if getattr(method, '__task__', None) and \
-                        method.__name__ == task:
-                    result = self.run_task(task_class, task, task_args)
-                    if index == len(commands):
-                        self.storage.clear()
-                        return result
+            method = getattr(task_class, name)
+            if getattr(method, '__task__', None) is not None and \
+                    method.__name__ == name:
+                result = self.run_task(task_class, name, args)
+                if index == len(commands):
+                    self.storage.clear()
+                    return result
