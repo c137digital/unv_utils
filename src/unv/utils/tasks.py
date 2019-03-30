@@ -1,8 +1,9 @@
 import asyncio
+import functools
 
 
 def register(method):
-    method.__task__ = {}
+    method.__task__ = True
     return method
 
 
@@ -57,8 +58,7 @@ class TasksManager:
                 args = task_args.split(',')
 
             method = getattr(task_class, name)
-            if getattr(method, '__task__', None) is not None and \
-                    method.__name__ == name:
+            if getattr(method, '__task__', None) and name == method.__name__:
                 result = self.run_task(task_class, name, args)
                 if index == len(commands):
                     self.storage.clear()
