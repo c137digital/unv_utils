@@ -7,6 +7,8 @@ from unv.utils.tasks import (
 
 
 class SimpleTasks(TasksBase):
+    NAMESPACE = 'simple'
+
     async def multiply_by_2(self, param):
         await asyncio.sleep(0.1)
         return param * 2

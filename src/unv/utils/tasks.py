@@ -1,5 +1,4 @@
 import asyncio
-import functools
 
 
 def register(method):
@@ -38,8 +37,7 @@ class TasksManager:
         self.storage = {}
 
     def register(self, task_class, namespace: str = ''):
-        namespace = namespace or task_class.__name__.lower() \
-            .replace('tasks', '')
+        namespace = namespace or task_class.NAMESPACE
         self.tasks[namespace] = task_class
 
     def run_task(self, task_class, name, args):
