@@ -14,11 +14,12 @@ class TasksBase:
     def __init__(self, storage):
         self._storage = storage
 
-    async def _local(self, command):
+    async def _local(self, command, interactive=False):
+        stdout = stderr = asyncio.subprocess.PIPE
+        if interactive:
+            stdout = stderr = None
         proc = await asyncio.create_subprocess_shell(
-            command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            command, stdout=stdout, stderr=stderr
         )
         stdout, stderr = await proc.communicate()
         if stderr and proc.returncode != 0:
