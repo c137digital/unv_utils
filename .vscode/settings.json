@@ -1,13 +1,12 @@
 {
     "python.pythonPath": "venv/bin/python",
-    "python.unitTest.pyTestEnabled": true,
-    "python.unitTest.nosetestsEnabled": false,
-    "python.unitTest.unittestEnabled": false,
+    "python.testing.pyTestEnabled": true,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": false,
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": false,
     "python.linting.prospectorEnabled": true,
     "python.formatting.provider": "autopep8",
-    "gitlens.currentLine.scrollable": false,
     "editor.renderWhitespace": "all",
     "editor.rulers": [80],
     "files.exclude":{

@@ -11,9 +11,6 @@ class TaskRunError(Exception):
 
 
 class TasksBase:
-    def __init__(self, storage):
-        self._storage = storage
-
     async def _local(self, command, interactive=False):
         stdout = stderr = asyncio.subprocess.PIPE
         if interactive:
@@ -35,14 +32,13 @@ class TasksBase:
 class TasksManager:
     def __init__(self):
         self.tasks = {}
-        self.storage = {}
 
     def register(self, task_class, namespace: str = ''):
         namespace = namespace or task_class.NAMESPACE
         self.tasks[namespace] = task_class
 
     def run_task(self, task_class, name, args):
-        task = getattr(task_class(self.storage), name)
+        task = getattr(task_class(), name)
         return asyncio.run(task(*args))
 
     def run(self, commands):
@@ -60,5 +56,4 @@ class TasksManager:
             if getattr(method, '__task__', None) and name == method.__name__:
                 result = self.run_task(task_class, name, args)
                 if index == len(commands):
-                    self.storage.clear()
                     return result
