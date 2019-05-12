@@ -11,6 +11,9 @@ class TaskRunError(Exception):
 
 
 class TasksBase:
+    def __init__(self, manager):
+        self._manager = manager
+
     async def _local(self, command, interactive=False):
         stdout = stderr = asyncio.subprocess.PIPE
         if interactive:
@@ -38,7 +41,7 @@ class TasksManager:
         self.tasks[namespace] = task_class
 
     def run_task(self, task_class, name, args):
-        task = getattr(task_class(), name)
+        task = getattr(task_class(self), name)
         return asyncio.run(task(*args))
 
     def run(self, commands):
