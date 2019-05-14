@@ -10,7 +10,7 @@ class TaskRunError(Exception):
     pass
 
 
-class TasksBase:
+class Tasks:
     def __init__(self, manager):
         self._manager = manager
 

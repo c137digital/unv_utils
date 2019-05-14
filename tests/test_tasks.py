@@ -2,11 +2,11 @@ import asyncio
 import pytest
 
 from unv.utils.tasks import (
-    TasksManager, TasksBase, register, TaskRunError
+    TasksManager, Tasks, register, TaskRunError
 )
 
 
-class SimpleTasks(TasksBase):
+class SimpleTasks(Tasks):
     NAMESPACE = 'simple'
 
     async def multiply_by_2(self, param):
