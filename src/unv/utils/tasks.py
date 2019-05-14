@@ -11,8 +11,17 @@ class TaskRunError(Exception):
 
 
 class Tasks:
+    NAMESPACE = ''
+
     def __init__(self, manager):
         self._manager = manager
+
+    @classmethod
+    def get_namespace(cls):
+        namespace = cls.NAMESPACE
+        if not namespace:
+            raise ValueError('Please define NAMESPACE for {}'.format(cls))
+        return namespace
 
     async def _local(self, command, interactive=False):
         stdout = stderr = asyncio.subprocess.PIPE
@@ -36,9 +45,8 @@ class TasksManager:
     def __init__(self):
         self.tasks = {}
 
-    def register(self, task_class, namespace: str = ''):
-        namespace = namespace or task_class.NAMESPACE
-        self.tasks[namespace] = task_class
+    def register(self, task_class):
+        self.tasks[task_class.get_namespace()] = task_class
 
     def run_task(self, task_class, name, args):
         task = getattr(task_class(self), name)
