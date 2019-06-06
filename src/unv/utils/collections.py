@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 def update_dict_recur(
         original: dict, from_dict: dict, copy: bool = False) -> dict:
     """Update dict recursively.
@@ -26,11 +29,12 @@ def update_dict_recur(
     'two'
     """
     if copy:
-        original = original.copy()
+        original = deepcopy(original)
+
     for key, value in from_dict.items():
         if isinstance(value, dict) and key in original:
             original[key] = update_dict_recur(
-                original.get(key, {}), value, copy)
+                original.get(key, {}), value)
         else:
             original[key] = value
     return original
