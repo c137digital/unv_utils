@@ -24,6 +24,7 @@ class Tasks:
         return namespace
 
     async def _local(self, command, interactive=False):
+        # TODO: move to function (will be used instead of os.system)
         stdout = stderr = asyncio.subprocess.PIPE
         if interactive:
             stdout = stderr = None
