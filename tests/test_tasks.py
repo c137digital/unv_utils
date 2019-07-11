@@ -1,9 +1,7 @@
 import asyncio
 import pytest
 
-from unv.utils.tasks import (
-    TasksManager, Tasks, register, TaskRunError
-)
+from unv.utils.tasks import TasksManager, Tasks, register, TaskRunError
 
 
 class SimpleTasks(Tasks):

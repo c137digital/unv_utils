@@ -10,6 +10,28 @@ class TaskRunError(Exception):
     pass
 
 
+class SubprocessShellError(Exception):
+    pass
+
+
+async def run_subprocess_shell(command, interactive=False):
+    stdout = stderr = asyncio.subprocess.PIPE
+    if interactive:
+        stdout = stderr = None
+    proc = await asyncio.create_subprocess_shell(
+        command, stdout=stdout, stderr=stderr
+    )
+    stdout, stderr = await proc.communicate()
+    if stderr and proc.returncode != 0:
+        raise SubprocessShellError(
+            f'Command "{command}" finished with '
+            f'error code [{proc.returncode}]:\n'
+            f'{stderr.decode()} '
+        )
+    if stdout:
+        return stdout.decode()
+
+
 class Tasks:
     NAMESPACE = ''
 
@@ -23,23 +45,12 @@ class Tasks:
             raise ValueError('Please define NAMESPACE for {}'.format(cls))
         return namespace
 
-    async def _local(self, command, interactive=False):
-        # TODO: move to function (will be used instead of os.system)
-        stdout = stderr = asyncio.subprocess.PIPE
-        if interactive:
-            stdout = stderr = None
-        proc = await asyncio.create_subprocess_shell(
-            command, stdout=stdout, stderr=stderr
-        )
-        stdout, stderr = await proc.communicate()
-        if stderr and proc.returncode != 0:
-            raise TaskRunError(
-                f'Command "{command}" finished with '
-                f'error code [{proc.returncode}]:\n'
-                f'{stderr.decode()} '
-            )
-        if stdout:
-            return stdout.decode()
+    @staticmethod
+    async def _local(command, interactive=False):
+        try:
+            return await run_subprocess_shell(command, interactive)
+        except SubprocessShellError as err:
+            raise TaskRunError(err)
 
 
 class TasksManager:
