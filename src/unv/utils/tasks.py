@@ -1,5 +1,7 @@
 import asyncio
 
+from .os import run_in_shell, RunInShellError
+
 
 def register(method):
     method.__task__ = True
@@ -8,28 +10,6 @@ def register(method):
 
 class TaskRunError(Exception):
     pass
-
-
-class SubprocessShellError(Exception):
-    pass
-
-
-async def run_subprocess_shell(command, interactive=False):
-    stdout = stderr = asyncio.subprocess.PIPE
-    if interactive:
-        stdout = stderr = None
-    proc = await asyncio.create_subprocess_shell(
-        command, stdout=stdout, stderr=stderr
-    )
-    stdout, stderr = await proc.communicate()
-    if stderr and proc.returncode != 0:
-        raise SubprocessShellError(
-            f'Command "{command}" finished with '
-            f'error code [{proc.returncode}]:\n'
-            f'{stderr.decode()} '
-        )
-    if stdout:
-        return stdout.decode()
 
 
 class Tasks:
@@ -48,8 +28,8 @@ class Tasks:
     @staticmethod
     async def _local(command, interactive=False):
         try:
-            return await run_subprocess_shell(command, interactive)
-        except SubprocessShellError as err:
+            return await run_in_shell(command, interactive)
+        except RunInShellError as err:
             raise TaskRunError(err)
 
 
