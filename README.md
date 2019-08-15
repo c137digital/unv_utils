@@ -12,3 +12,7 @@
 [![PyPI download month](https://img.shields.io/pypi/dm/unv_utils.svg)](https://pypi.python.org/pypi/unv_utils/)
 
 ## Common python utils used in unv.app and other packages
+
+- os helpers
+- dict helpers (nested update)
+- base tasks classes for task system
