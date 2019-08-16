@@ -11,13 +11,8 @@
 [![PyPI version fury.io](https://badge.fury.io/py/unv.utils.svg)](https://pypi.python.org/pypi/unv.utils/)
 [![PyPI download month](https://img.shields.io/pypi/dm/unv_utils.svg)](https://pypi.python.org/pypi/unv_utils/)
 
-## What you need to change
+## Common python utils used in unv.app and other packages
 
-- package name to whatever you want
-- setup.py
-  - name
-  - description
-  - author (git)
-  - email (git)
-  - install_requires + requirements.txt
-  - LICENSE
+- os helpers
+- dict helpers (nested update)
+- base tasks classes for task system
