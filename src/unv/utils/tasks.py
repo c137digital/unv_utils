@@ -1,3 +1,4 @@
+import logging
 import asyncio
 
 from .os import run_in_shell, RunInShellError
@@ -17,6 +18,7 @@ class Tasks:
 
     def __init__(self, manager):
         self._manager = manager
+        self._logger = logging.getLogger(self.__class__.__name__)
 
     @classmethod
     def get_namespace(cls):
@@ -28,6 +30,8 @@ class Tasks:
     @staticmethod
     async def _local(command, interactive=False):
         try:
+            # log running command
+            # log run command on RemoteManager
             return await run_in_shell(command, interactive)
         except RunInShellError as err:
             raise TaskRunError(err)
