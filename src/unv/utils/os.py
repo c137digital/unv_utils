@@ -16,7 +16,7 @@ def get_homepath() -> pathlib.Path:
     return pathlib.Path(os.path.expanduser('~'))
 
 
-async def run_in_shell(command, interactive=False):
+async def run_in_shell(command: str, interactive: bool = False) -> str:
     stdout = stderr = asyncio.subprocess.PIPE
     if interactive:
         stdout = stderr = None

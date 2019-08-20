@@ -1,10 +1,11 @@
 import logging
 import asyncio
+import typing
 
 from .os import run_in_shell, RunInShellError
 
 
-def register(method):
+def register(method: typing.Any) -> typing.Any:
     method.__task__ = True
     return method
 
@@ -21,7 +22,7 @@ class Tasks:
         self._logger = logging.getLogger(self.__class__.__name__)
 
     @classmethod
-    def get_namespace(cls):
+    def get_namespace(cls) -> str:
         namespace = cls.NAMESPACE
         if not namespace:
             raise ValueError('Please define NAMESPACE for {}'.format(cls))
@@ -48,7 +49,7 @@ class TasksManager:
         task = getattr(task_class(self), name)
         return asyncio.run(task(*args))
 
-    def run(self, commands):
+    def run(self, commands) -> typing.Any:
         commands = commands.split()
         for index, command in enumerate(commands, start=1):
             namespace, name = command.split('.')

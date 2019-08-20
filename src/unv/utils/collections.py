@@ -37,4 +37,5 @@ def update_dict_recur(
                 original.get(key, {}), value)
         else:
             original[key] = value
+
     return original
