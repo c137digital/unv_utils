@@ -2,7 +2,9 @@ rm -rf ./venv
 
 python3 -m venv ./venv
 
-. activate.sh
+find . -type d -name '*.egg-info' -exec rm -rf {} +
 
-pip install --upgrade pip
-pip install -e .[dev]
+source activate.sh
+
+python3 -m pip install --upgrade pip wheel
+python3 -m pip install -e ".[dev]"
