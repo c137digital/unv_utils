@@ -49,9 +49,9 @@ class TasksManager:
         task = getattr(task_class(self), name)
         return asyncio.run(task(*args))
 
-    def run(self, commands) -> typing.Any:
-        commands = commands.split()
-        for index, command in enumerate(commands, start=1):
+    def run(self, *commands) -> typing.Any:
+        result = None
+        for command in commands:
             namespace, name = command.split('.')
 
             task_class = self.tasks[namespace]
@@ -63,5 +63,4 @@ class TasksManager:
             method = getattr(task_class, name)
             if getattr(method, '__task__', None) and name == method.__name__:
                 result = self.run_task(task_class, name, args)
-                if index == len(commands):
-                    return result
+        return result

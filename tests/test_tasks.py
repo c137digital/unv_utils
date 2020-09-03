@@ -37,13 +37,13 @@ def test_tasks_register_and_run():
     result = manager.run('simple.example:2')
     assert result == 6
 
-    result = manager.run('simple.example:20 simple.example')
+    result = manager.run(*'simple.example:20 simple.example'.split())
     assert result == 2
 
     result = manager.run('simple.example')
     assert result == 2
 
-    result = manager.run('simple.example:2,4')
+    result = manager.run('simple.example', 'simple.example:2,4')
     assert result == 14
 
     result = manager.run('simple.run')
