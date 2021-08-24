@@ -7,6 +7,9 @@ from unv.utils.tasks import TasksManager, Tasks, register, TaskRunError
 class SimpleTasks(Tasks):
     NAMESPACE = 'simple'
 
+    BEFORE_CALLED = 0
+    AFTER_CALLED = 0
+
     async def multiply_by_2(self, param):
         await asyncio.sleep(0.1)
         return param * 2
@@ -22,6 +25,18 @@ class SimpleTasks(Tasks):
     @register
     async def run(self):
         return await self._local('echo "test"')
+
+    @register
+    async def somehook(self):
+        return 4
+
+    @somehook.before
+    async def somehook_before(self):
+        self.__class__.BEFORE_CALLED += 1
+
+    @somehook.after
+    async def somehook_after(self):
+        self.__class__.AFTER_CALLED += 1
 
     @register
     async def will_raise(self):
@@ -51,3 +66,13 @@ def test_tasks_register_and_run():
 
     with pytest.raises(TaskRunError):
         manager.run('simple.will_raise')
+
+
+def test_tasks_hooks():
+    manager = TasksManager()
+    manager.register(SimpleTasks)
+
+    result = manager.run('simple.somehook', 'simple.example')
+    assert result == 2
+    assert SimpleTasks.BEFORE_CALLED == 1
+    assert SimpleTasks.AFTER_CALLED == 1

@@ -2,11 +2,24 @@ import logging
 import asyncio
 import typing
 
+from functools import partial
+
 from .os import run_in_shell, RunInShellError
 
 
 def register(method: typing.Any) -> typing.Any:
     method.__task__ = True
+
+    def before(func):
+        method.__task__before__ = func
+        return method
+    method.before = before
+
+    def after(func):
+        method.__task__after__ = func
+        return method
+    method.after = after
+
     return method
 
 
@@ -49,8 +62,18 @@ class TasksManager:
         task = getattr(task_class(self), name)
         return asyncio.run(task(*args))
 
+    def run_hook(self, task_class, name, hook_name):
+        instance = task_class(self)
+        task = getattr(task_class(self), name)
+        task = getattr(task, f'__task__{hook_name}__')
+        return asyncio.run(task(instance))
+
     def run(self, *commands) -> typing.Any:
         result = None
+        before_hooks_to_run = []
+        tasks_to_run = []
+        after_hooks_to_run = []
+
         for command in commands:
             namespace, name = command.split('.')
 
@@ -61,6 +84,26 @@ class TasksManager:
                 args = task_args.split(',')
 
             method = getattr(task_class, name)
+            before_func = getattr(method, '__task__before__', None)
+            after_func = getattr(method, '__task__after__', None)
+
+            if before_func:
+                before_hooks_to_run.append(
+                    partial(self.run_hook, task_class, name, 'before'))
             if getattr(method, '__task__', None) and name == method.__name__:
-                result = self.run_task(task_class, name, args)
+                tasks_to_run.append(
+                    partial(self.run_task, task_class, name, args))
+            if after_func:
+                after_hooks_to_run.append(
+                    partial(self.run_hook, task_class, name, 'after'))
+
+        for task in before_hooks_to_run:
+            task()
+
+        for task in tasks_to_run:
+            result = task()
+
+        for task in after_hooks_to_run:
+            task()
+
         return result

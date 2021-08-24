@@ -2,7 +2,7 @@ from copy import deepcopy
 
 
 def update_dict_recur(
-        original: dict, from_dict: dict, copy: bool = False) -> dict:
+        original: dict, from_dict: dict, copy: bool = True) -> dict:
     """Update dict recursively.
 
     >>> original = {0: 'zero', 1: {1: 'one'}, 2: {2: {3: 3}}, 6: 'item'}

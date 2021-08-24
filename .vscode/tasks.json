@@ -10,13 +10,13 @@
             "label": "Python: Build",
             "type": "shell",
             "dependsOn": ["Python: Cleanup Build"],
-            "command": ". activate.sh && python setup.py sdist bdist_wheel"
+            "command": "source activate.sh && python setup.py sdist bdist_wheel"
         },
         {
             "label": "Python: Release package on PyPI",
             "type": "shell",
             "dependsOn": ["Python: Build"],
-            "command": ". activate.sh && twine upload dist/* -u mortyspace"
+            "command": "source activate.sh && twine upload dist/* -u mortyspace"
         },
         {
             "label": "Prospector: Inspect",
